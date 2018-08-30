@@ -34,7 +34,7 @@ function Get-MrAST {
                    ParameterSetName = 'File',
                    Position = 0)]
         [ValidateNotNullOrEmpty()]
-        [Alias('FilePath')]
+        [Alias('FilePath', 'FileName')]
         [string[]]$Path = ('.\*.ps1', '.\*.psm1'),
 
         [Parameter(ValueFromPipelineByPropertyName,
@@ -42,7 +42,7 @@ function Get-MrAST {
                    ParameterSetName = 'Code',
                    Position = 0)]
         [ValidateNotNull()]
-        [Alias('ScriptBlock')]
+        [Alias('Script', 'ScriptBlock')]
         [string[]]$Code
     )
  

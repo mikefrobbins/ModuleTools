@@ -1,20 +1,19 @@
 ﻿function Get-MrToken {
     [CmdletBinding(DefaultParameterSetName='File')]
     param (
-        [Parameter(ValueFromPipelineByPropertyName,
-                   ValueFromRemainingArguments,
+        [Parameter(ValueFromPipeline,
+                   ValueFromPipelineByPropertyName,
                    ParameterSetName = 'File',
                    Position = 0)]
         [ValidateNotNullOrEmpty()]
-        [Alias('FilePath')]
+        [Alias('FilePath', 'FileName')]
         [string[]]$Path = ('.\*.ps1', '.\*.psm1'),
 
-        [Parameter(Mandatory,
-                   ValueFromPipeline,
-                   ValueFromRemainingArguments,
+        [Parameter(ValueFromPipelineByPropertyName,
                    ParameterSetName = 'Code',
                    Position = 0)]
-        [Alias('ScriptBlock')]
+        [ValidateNotNull()]
+        [Alias('Script', 'ScriptBlock')]
         [string[]]$Code,
 
         [Parameter(Position=1)]
