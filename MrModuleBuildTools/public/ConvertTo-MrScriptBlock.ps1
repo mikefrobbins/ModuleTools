@@ -1,5 +1,5 @@
 ﻿#Requires -Version 3.0
-function Create-MrScriptBlock {
+function ConvertTo-MrScriptBlock {
     [CmdletBinding()]
     param (
         [Parameter(ValueFromPipeline,
