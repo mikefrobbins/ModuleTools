@@ -66,7 +66,7 @@ function Get-MrAST {
         $ParameterAttribute = New-Object -TypeName System.Management.Automation.ParameterAttribute
         $ParameterAttribute.Position = 0
 
-        $ValidationValues = Get-MrAstType -Simple
+        $ValidationValues = Get-MrAstType
         $ValidateSetAttribute = New-Object -TypeName System.Management.Automation.ValidateSetAttribute($ValidationValues)
 
         $AttributeCollection = New-Object -TypeName System.Collections.ObjectModel.Collection[System.Attribute]

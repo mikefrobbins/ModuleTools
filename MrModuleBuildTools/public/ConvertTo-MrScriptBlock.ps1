@@ -12,7 +12,7 @@ function ConvertTo-MrScriptBlock {
                 Throw "'$_' is not valid."
             }
         })]
-        [Alias('FilePath', 'FileName')]
+        [Alias('FilePath')]
         [string[]]$Path = ('.\*.ps1', '.\*.psm1')
     )
 
