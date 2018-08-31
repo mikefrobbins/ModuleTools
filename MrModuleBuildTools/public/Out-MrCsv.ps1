@@ -4,7 +4,7 @@ function Out-MrCsv {
     param (
         [Parameter(Mandatory,
                    ValueFromPipeline)]
-        [string[]]$Input
+        [string[]]$InputObject
     )
 
     BEGIN {
@@ -12,7 +12,7 @@ function Out-MrCsv {
     }
 
     PROCESS {
-        $Results += foreach ($i in $Input) {
+        $Results += foreach ($i in $InputObject) {
             "'{0}'" -f $i
         }
     }
