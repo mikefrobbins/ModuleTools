@@ -1,5 +1,5 @@
 ﻿#Requires -Version 4.0
-function Get-MrAST {
+function Get-MrAst {
 
 <#
 .SYNOPSIS

@@ -1,5 +1,5 @@
 ﻿#Requires -Version 3.0
-function Out-MrCsv {
+function ConvertTo-MrCsv {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory,
@@ -12,8 +12,8 @@ function Out-MrCsv {
     }
 
     PROCESS {
-        $Results += foreach ($i in $InputObject) {
-            "'{0}'" -f $i
+        $Results += foreach ($Input in $InputObject) {
+            "'{0}'" -f $Input
         }
     }
 
