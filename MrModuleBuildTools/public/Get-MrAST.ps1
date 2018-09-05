@@ -83,8 +83,6 @@ function Get-MrAst {
 
     BEGIN {
         $AstType = $PsBoundParameters[$ParameterName]
-        $Errors = $null
-        $Tokens = $null
     }
 
     PROCESS {
@@ -94,12 +92,12 @@ function Get-MrAst {
                 Write-Verbose "Path contains $Path"
                 $Files = Get-ChildItem -Path $Path -Exclude *tests.ps1, *profile.ps1 | Select-Object -ExpandProperty FullName
                 $AST = foreach ($File in $Files) {
-                    [System.Management.Automation.Language.Parser]::ParseFile($File, [ref]$Tokens, [ref]$Errors)
+                    [System.Management.Automation.Language.Parser]::ParseFile($File, [ref]$null, [ref]$null)
                 }
             }
             'Code' {
                 Write-Verbose -Message 'Code Parameter Set Selected'
-                $AST = [System.Management.Automation.Language.Parser]::ParseInput($Code, [ref]$Tokens, [ref]$Errors)
+                $AST = [System.Management.Automation.Language.Parser]::ParseInput($Code, [ref]$null, [ref]$null)
             }
             'ScriptBlock' {
                 if ($ScriptBlock -isnot [scriptblock]) {
