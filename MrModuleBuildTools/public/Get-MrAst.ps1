@@ -59,6 +59,14 @@ function Get-MrAst {
                    ValueFromRemainingArguments,
                    ParameterSetName = 'ScriptBlock',
                    Position = 1)]
+        [ValidateScript({
+            if ($_ | ForEach-Object {$_ -is [scriptblock]}) {
+                $true
+            }
+            else {
+                Throw "$_ is not a valid script block."
+            }
+        })]
         $ScriptBlock
     )
  
@@ -94,18 +102,19 @@ function Get-MrAst {
                 $AST = foreach ($File in $Files) {
                     [System.Management.Automation.Language.Parser]::ParseFile($File, [ref]$null, [ref]$null)
                 }
+                break
             }
             'Code' {
                 Write-Verbose -Message 'Code Parameter Set Selected'
-                $AST = [System.Management.Automation.Language.Parser]::ParseInput($Code, [ref]$null, [ref]$null)
+                $AST = foreach ($c in $Code) {
+                    [System.Management.Automation.Language.Parser]::ParseInput($c, [ref]$null, [ref]$null)
+                }
+                break
             }
             'ScriptBlock' {
-                if ($ScriptBlock -isnot [scriptblock]) {
-                    Throw 'Invalid input on parameter ScriptBlock. Input must be of type [scriptblock].'
-                }
-
                 Write-Verbose -Message 'ScriptBlock Parameter Set Selected'
                 $AST = $ScriptBlock.Ast
+                break
             }
             default {
                 Write-Warning -Message 'An unexpected error has occurred'
