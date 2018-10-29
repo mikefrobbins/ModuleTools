@@ -36,12 +36,12 @@ function Get-MrAst {
     Twitter: @mikefrobbins
 #>
 
-    [CmdletBinding(DefaultParameterSetName='File')]
+    [CmdletBinding(DefaultParameterSetName='Path')]
     param(
         [Parameter(ValueFromPipeline,
                    ValueFromPipelineByPropertyName,
                    ValueFromRemainingArguments,
-                   ParameterSetName = 'File',
+                   ParameterSetName = 'Path',
                    Position = 1)]
         [ValidateNotNull()]
         [Alias('FilePath')]
@@ -50,24 +50,14 @@ function Get-MrAst {
         [Parameter(Mandatory,
                    ValueFromPipelineByPropertyName,
                    ValueFromRemainingArguments,
-                   ParameterSetName = 'Code',
-                   Position = 1)]
+                   ParameterSetName = 'Code')]
         [string[]]$Code,
 
         [Parameter(Mandatory,
                    ValueFromPipelineByPropertyName,
                    ValueFromRemainingArguments,
-                   ParameterSetName = 'ScriptBlock',
-                   Position = 1)]
-        [ValidateScript({
-            if ($_ | ForEach-Object {$_ -is [scriptblock]}) {
-                $true
-            }
-            else {
-                Throw "$_ is not a valid script block."
-            }
-        })]
-        $ScriptBlock
+                   ParameterSetName = 'ScriptBlock')]
+        [scriptblock[]]$ScriptBlock
     )
  
     DynamicParam {
@@ -95,25 +85,38 @@ function Get-MrAst {
 
     PROCESS {
         switch ($PSCmdlet.ParameterSetName) {
-            'File' {
-                Write-Verbose -Message 'File Parameter Set Selected'
+            'Path' {
+                Write-Verbose -Message 'Path Parameter Set Selected'
                 Write-Verbose "Path contains $Path"
-                $Files = Get-ChildItem -Path $Path -Exclude *tests.ps1, *profile.ps1 | Select-Object -ExpandProperty FullName
+                
+                $Files = Get-ChildItem -Path $Path -Exclude *tests.ps1, *profile.ps1 |
+                         Select-Object -ExpandProperty FullName
+                
+                if (-not ($Files)) {
+                    Write-Warning -Message 'No validate files found.'
+                    Return
+                }
+
                 $AST = foreach ($File in $Files) {
                     [System.Management.Automation.Language.Parser]::ParseFile($File, [ref]$null, [ref]$null)
                 }
+
                 break
             }
             'Code' {
                 Write-Verbose -Message 'Code Parameter Set Selected'
+
                 $AST = foreach ($c in $Code) {
                     [System.Management.Automation.Language.Parser]::ParseInput($c, [ref]$null, [ref]$null)
                 }
+
                 break
             }
             'ScriptBlock' {
                 Write-Verbose -Message 'ScriptBlock Parameter Set Selected'
+                
                 $AST = $ScriptBlock.Ast
+                
                 break
             }
             default {
@@ -123,6 +126,7 @@ function Get-MrAst {
 
         if ($PsBoundParameters.AstType) {
             Write-Verbose -Message 'AstType Parameter Entered'
+            
             $AST = $AST.FindAll({$args[0].GetType().Name -like "*$ASTType*Ast"}, $true)
         }
 

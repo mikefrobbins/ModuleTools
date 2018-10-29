@@ -64,7 +64,7 @@ InModuleScope MrModuleBuildTools {
             }
             It 'Accepts multiple files' {
                 ($Files | Get-MrAst).Count |
-                Should -Be 2
+                Should -BeGreaterThan 1
             }
             It 'Accepts a directory' {
                 ($Directory | Get-MrAst).Count |
@@ -73,6 +73,10 @@ InModuleScope MrModuleBuildTools {
             It 'Works with the AstType parameter' {
                 ($Files[0] | Get-MrAst -AstType FunctionDefinition).Extent.Text |
                 Should -Not -BeNullOrEmpty
+            }
+            It 'Works with the AstType parameter positionally' {
+                ($Files | Get-MrAst FunctionDefinition).Count |
+                Should -BeGreaterThan 1
             }
 
         }
