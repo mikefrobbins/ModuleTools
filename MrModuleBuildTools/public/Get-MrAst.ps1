@@ -93,7 +93,7 @@ function Get-MrAst {
                          Select-Object -ExpandProperty FullName
                 
                 if (-not ($Files)) {
-                    Write-Warning -Message 'No validate files found.'
+                    Write-Warning -Message 'No valid files found.'
                     Return
                 }
 
