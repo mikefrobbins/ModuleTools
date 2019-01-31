@@ -24,7 +24,6 @@ function Get-MrPrivateCommand {
     Twitter: @mikefrobbins
 #>
 
-
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
@@ -32,11 +31,9 @@ function Get-MrPrivateCommand {
         [string]$Module
     )
 
-    $Script:ModuleName = $Module
-
-    if (-not((Get-Module -Name $ModuleName -OutVariable ModuleInfo))){
+    if (-not((Get-Module -Name $Module -OutVariable ModuleInfo))){
         try {
-            $ModuleInfo = Import-Module -Name $ModuleName -Force -PassThru -ErrorAction Stop
+            $ModuleInfo = Import-Module -Name $Module -Force -PassThru -ErrorAction Stop
         }
         catch {
             Write-Warning -Message "$_.Exception.Message"
@@ -44,12 +41,14 @@ function Get-MrPrivateCommand {
         }
     }
 
-    $ExportedCommands = Get-Command -Module $ModuleName
-    
-    $AllCommands = $ModuleInfo.Invoke({Get-Command -Module (Get-Module -Name $ModuleName) |
-                   Sort-Object -Property Version -Descending | Select-Object -Unique})
+    $Global:ModuleName = $Module
+    $All = $ModuleInfo.Invoke({Get-Command -Module $ModuleName})
 
-    Compare-Object -ReferenceObject $ExportedCommands -DifferenceObject $AllCommands |
+    $Exported = (Get-Module -Name $Module).ExportedCommands |
+                Select-Object -ExpandProperty Values |
+                Where-Object CommandType -ne Alias
+
+    Compare-Object -ReferenceObject $All -DifferenceObject $Exported |
     Select-Object -ExpandProperty InputObject |
-    Add-Member -MemberType NoteProperty -Name Visibility -Value Private -Force -PassThru    
+    Add-Member -MemberType NoteProperty -Name Visibility -Value Private -Force -PassThru
 }
