@@ -42,13 +42,15 @@ function Get-MrPrivateCommand {
     }
 
     $Global:ModuleName = $Module
-    $All = $ModuleInfo.Invoke({Get-Command -Module $ModuleName})
 
-    $Exported = (Get-Module -Name $Module).ExportedCommands |
-                Select-Object -ExpandProperty Values |
-                Where-Object CommandType -ne Alias
+    $All = $ModuleInfo.Invoke({Get-Command -Module $ModuleName -All})
+    
+    $Exported = (Get-Module -Name $Module -All).ExportedCommands |
+                Select-Object -ExpandProperty Values
 
-    Compare-Object -ReferenceObject $All -DifferenceObject $Exported |
-    Select-Object -ExpandProperty InputObject |
-    Add-Member -MemberType NoteProperty -Name Visibility -Value Private -Force -PassThru
+    if ($All -and $Exported) {
+        Compare-Object -ReferenceObject $All -DifferenceObject $Exported |
+        Select-Object -ExpandProperty InputObject |
+        Add-Member -MemberType NoteProperty -Name Visibility -Value Private -Force -PassThru
+    }    
 }

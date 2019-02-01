@@ -10,11 +10,34 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here\$sut"
 
 Describe 'Get-MrPrivateCommand' {
-    It "Doesn't return any public functions" {
-        Get-MrPrivateCommand -Module $Module |
-        ForEach-Object {
-            Get-Command -Name $_.Name -ErrorAction SilentlyContinue -Module $_.Source
-        } |
-        Should -BeNullOrEmpty
+    
+    if (-not(Get-MrPrivateCommand -Module $Module -OutVariable PrivateCommands)){
+        Write-Host -Object "Aborting tests! No private commands found for module '$Module'." -ForegroundColor Cyan
+        Break
     }
+    else {
+        Write-Host -Object "Testing $($PrivateCommands.Count) private commands for module '$Module'." -ForegroundColor Cyan
+    }
+
+    Context "Testing module '$Module' with Get-Command" {
+        $PrivateCommands |
+        ForEach-Object {
+            It "Doesn't export the $($_.Name) $($_.CommandType)" {
+                Get-Command -Name $_.Name -Module $_.Source -ErrorAction SilentlyContinue |
+                Should -BeNullOrEmpty
+            } 
+        }
+    }
+    
+    Context "Testing module '$Module' with Get-Module" {
+        $PrivateCommands |
+        ForEach-Object {
+            It "Doesn't export the $($_.Name) $($_.CommandType)" {
+                (Get-Module -Name dbatools -All).ExportedCommands.Values |
+                Where-Object Name -eq $_.Name |
+                Should -BeNullOrEmpty
+            }
+        }
+    }
+    
 }
