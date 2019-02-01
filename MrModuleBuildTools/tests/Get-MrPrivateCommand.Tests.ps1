@@ -19,6 +19,8 @@ Describe 'Get-MrPrivateCommand' {
         Write-Host -Object "Testing $($PrivateCommands.Count) private commands for module '$Module'." -ForegroundColor Cyan
     }
 
+    $ExportedCommands = Get-Module -Name $Module -All
+
     Context "Testing module '$Module' with Get-Command" {
         $PrivateCommands |
         ForEach-Object {
@@ -33,7 +35,7 @@ Describe 'Get-MrPrivateCommand' {
         $PrivateCommands |
         ForEach-Object {
             It "Doesn't export the $($_.Name) $($_.CommandType)" {
-                (Get-Module -Name dbatools -All).ExportedCommands.Values |
+                $ExportedCommands.ExportedCommands.Values |
                 Where-Object Name -eq $_.Name |
                 Should -BeNullOrEmpty
             }
