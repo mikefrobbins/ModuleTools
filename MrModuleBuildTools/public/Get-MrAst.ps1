@@ -127,7 +127,7 @@ function Get-MrAst {
         if ($PsBoundParameters.AstType) {
             Write-Verbose -Message 'AstType Parameter Entered'
             
-            $AST = $AST.FindAll({$args[0].GetType().Name -like "*$ASTType*Ast"}, $true)
+            $AST = $AST.FindAll({$args[0].GetType().Name -like "$($ASTType)Ast"}, $true)
         }
 
         Write-Output $AST
