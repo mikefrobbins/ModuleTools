@@ -4,7 +4,7 @@ function Get-MrAstType {
     param ()
 
     ([System.Management.Automation.Language.ArrayExpressionAst].Assembly.GetTypes() |
-    Where-Object {$_.Name.EndsWith('Ast') -and $_.Name -ne 'Ast'}).Name -replace '(?<!^)ExpressionAst$|Ast$' |
+    Where-Object {$_.Name.EndsWith('Ast') -and $_.Name -ne 'Ast'}).Name -replace 'Ast$' |
     Sort-Object -Unique
 
 }
