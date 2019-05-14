@@ -27,7 +27,7 @@ Author = 'Mike F. Robbins'
 CompanyName = 'mikefrobbins.com'
 
 # Copyright statement for this module
-Copyright = '(c) 2018 Mike F. Robbins. All rights reserved.'
+Copyright = '(c) 2019 Mike F. Robbins. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PowerShell Script Module Building Toolkit'
