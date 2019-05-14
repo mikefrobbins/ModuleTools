@@ -16,10 +16,34 @@
                    Position = 0)]
         [ValidateNotNull()]
         [Alias('ScriptBlock')]
-        [string[]]$Code
+        [string[]]$Code,
+
+        [switch]$Detailed
     )
     
     PROCESS{
-        (Get-MrFunctionRequirement -Path $Path | Select-Object -ExpandProperty RequiredModules -Unique).Name
+        if (-not($PSBoundParameters.Detailed)) {
+            (Get-MrFunctionRequirement -Path $Path |
+             Select-Object -ExpandProperty RequiredModules -Unique).Name
+        }
+        else {
+            $PSBoundParameters.Remove('Detailed')
+            $AllAST = Get-MrAst @PSBoundParameters
+            
+            foreach ($AST in $AllAST){
+                $FunctionDefinition = $AST.FindAll({$args[0].GetType().Name -like 'FunctionDefinitionAst'}, $true)
+                $Commands = $AST.FindAll({$args[0].GetType().Name -like 'CommandAst'}, $true) | ForEach-Object {$_.CommandElements[0].Value} | Select-Object -Unique
+                
+                foreach ($Command in $Commands){
+                    [pscustomobject]@{
+                        Function = $FunctionDefinition.Name
+                        Dependency = $Command
+                        Module = (Get-Command -Name $Command -ErrorAction SilentlyContinue).Source
+                    }
+                }               
+               
+            }
+
+        }
     }
 }
