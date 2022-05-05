@@ -1,4 +1,4 @@
-# ModuleBuildTools
+# ModuleTools
 
-PowerShell Script Module Building Toolkit
+PowerShell Script Module Toolkit
 
