@@ -34,9 +34,9 @@ function Get-MrVariableType {
 
     PROCESS {
 
-        $variables = $Ast.FindAll({$args[0].GetType().Name -like "VariableExpressionAst"}, $true).Where({$_.VariablePath.UserPath -ne '_'})
+        $variables = $Ast.FindAll({$args[0].GetType().Name -like 'VariableExpressionAst'}, $true).Where({$_.VariablePath.UserPath -ne '_'})
 
-        $parameters = $Ast.FindAll({$args[0].GetType().Name -like "ParameterAst"}, $true)
+        $parameters = $Ast.FindAll({$args[0].GetType().Name -like 'ParameterAst'}, $true)
 
         $diff = Compare-Object -ReferenceObject $parameters.Name.VariablePath.UserPath -DifferenceObject $variables.VariablePath.UserPath -IncludeEqual
 
